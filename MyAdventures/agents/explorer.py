@@ -14,16 +14,24 @@ class ExplorerBot(BaseAgent):
 
     #decideix si está elevat del terra
     def decide(self, perception):
-        player_y = perception["pos"].y
-        ground_y = perception["ground_y"]
-        
-        # Si está 3 bloques por encima del suelo, se considera 'flying'
-        if player_y > ground_y + 3:
-            return "volant"
-        return "chill"
+        if not perception: return None 
+        # Si estoy en el suelo, envío un mensaje de "Mapa Encontrado"
+        if perception["pos"].y == perception["ground_y"]+1:
+            return "publish_map"
+        return "wait"
+
 
     def act(self, action):
-        if action == "volant":
-            self.mc.postToChat(f"[{self.name}] OMYGA estic volant!")
-        elif action == "chill":
-            pass
+        if action == "publish_map":
+            # SIMULACRE!!!!!!!!!!!!!!!!!!!!!!! envio un JSON al bus
+            payload = {
+                "coordinates": {"x": 100, "z": 200},
+                "status": "flat",
+                "area_size": 10
+            }
+            # Enviamos a "ALL" (Broadcast) o a "BuilderBot"
+            # Usamos send_message que hereda de BaseAgent
+            self.send_message("BuilderBot", "map.v1", payload)
+            #AUTODESCONEXIÓ per TESTEIGGGGGG -> canvi d'estat
+            self.mc.postToChat("Explorer: Mapa enviatt. Letsgobabygirl.")
+            self.set_state("IDLE")

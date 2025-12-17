@@ -65,7 +65,7 @@ def main():
             elif "stop" in message:
                 # Aturo tots els agents
                 for agent in my_agents:
-                    agent.set_state("IDLE")  # [cite: 112]
+                    agent.set_state("IDLE") 
                     mc.postToChat(f"{agent.name} detingut.")
 
         # B. ACTUALITZACIÓ DELS AGENTS (cicle run_step)
