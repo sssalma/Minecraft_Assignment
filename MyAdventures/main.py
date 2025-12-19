@@ -26,7 +26,7 @@ def load_agents(mc):
             for attribute_name in dir(module):
                 if attribute_name.endswith("Bot"):
                     agent_class = getattr(module, attribute_name)
-                    
+                   
                     # 4. Instanciar l'agent
                     new_agent = agent_class(mc)
                     agents_loaded.append(new_agent)

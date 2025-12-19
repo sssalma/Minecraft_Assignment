@@ -65,7 +65,13 @@ class BaseAgent(ABC):
             elif cmd == "resume": self.set_state("RUNNING")
             elif cmd == "stop": self.set_state("IDLE")
 
+        #no vull que els fills estiguin cridant al pare (desacoblo amb un altre met)
+        self.on_message_received(msg) 
 
+    def on_message_received(self,msg):
+        #per defecte no fa res (HOOK)
+
+        pass
     def set_state(self, new_state):
         """Canvia l'estat i avisa."""
         print(f"[{self.name}] Canvi d'estat: {self.state} -> {new_state}")
