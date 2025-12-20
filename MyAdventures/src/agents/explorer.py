@@ -20,6 +20,7 @@ class ExplorerBot(BaseAgent):
             map_data = self.analyze_terrain((pos.x, pos.y, pos.z))
             return map_data
         except Exception as e:
+            self.reset()
             self.state_manager.transition(
                 AgentState.ERROR,
                 f"no s'ha pogut analitzar el terreny: {e}"
@@ -37,6 +38,7 @@ class ExplorerBot(BaseAgent):
         if not perception.is_valid():
             self.failed_searches += 1
             if self.failed_searches >= self.MAX_SEARCH_ATTEMPTS:
+                self.reset()
                 self.state_manager.transition(
                     AgentState.ERROR,
                     "no es troba area plana per construir"
@@ -91,3 +93,6 @@ class ExplorerBot(BaseAgent):
             flat_region=flat_region,
             obstacles=obstacles
     )
+
+def reset(self):
+    self.failed_searches = 0

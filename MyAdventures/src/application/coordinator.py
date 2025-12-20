@@ -44,3 +44,19 @@ class Coordinator:
                     payload=payload
                 )
             )
+    def send_strategy(self, target: str, strategy_name: str):
+        """
+        Envia una comanda de configuració d'estratègia del minerBot
+        """
+        print("[Coordinator] Enviant strategy:", strategy_name)
+
+        self.bus.send(
+            Message(
+                source="Coordinator",
+                target=target,
+                msg_type="command.strategy",
+                payload={
+                    "name": strategy_name
+            }
+        )
+    )

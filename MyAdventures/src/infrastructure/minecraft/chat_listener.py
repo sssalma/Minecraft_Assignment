@@ -38,3 +38,8 @@ class ChatListener:
 
         elif message == "explorer start":
             self.coordinator.send_control("ExplorerBot", "start")
+        elif message.startswith("miner set strategy"):
+            parts = message.split()
+            if len(parts) == 4:
+                strategy = parts[3] #la strategy serà la següent paraula
+                self.coordinator.send_strategy("MinerBot", strategy)

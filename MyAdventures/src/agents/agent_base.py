@@ -64,8 +64,8 @@ class BaseAgent(ABC):
             cmd = msg.payload.get("command")
 
             if cmd == "start":
-            # Solo arrancar si está parado o idle
-                if self.state_manager.is_state(AgentState.IDLE):
+            # Solo arrancar si está idle o waiting
+                if self.state_manager.is_state(AgentState.IDLE) or self.state_manager.is_state(AgentState.WAITING):
                     self.state_manager.transition(
                         AgentState.RUNNING,
                         "start command"
@@ -89,11 +89,13 @@ class BaseAgent(ABC):
 
             elif cmd == "stop":
                 # Stop siempre es seguro
+                self.reset() #faig resett
                 if not self.state_manager.is_state(AgentState.STOPPED):
                     self.state_manager.transition(
                         AgentState.STOPPED,
                         "stop command"
                     )
+                    
         # IMPORTANTE: los comandos de control NO se propagan a los hijos
             return
         # === Mensajes de dominio ===
@@ -101,6 +103,10 @@ class BaseAgent(ABC):
     def on_message_received(self,msg):
         #per defecte no fa res (HOOK)
 
+        pass
+    
+    #mètode per fer reset quan state = error
+    def reset():
         pass
 
     # mètodes abstractes pels overrides dels fills ---
@@ -115,3 +121,5 @@ class BaseAgent(ABC):
     @abstractmethod
     def act(self, action):
         pass
+    
+   

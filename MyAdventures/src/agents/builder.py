@@ -23,6 +23,7 @@ class BuilderBot(BaseAgent):  ###builder de prova
          # timeout esperant materials
         if self.state_manager.is_state(AgentState.WAITING):
             if time.time() - self.last_material_time > self.TIMEOUT_LIMIT:
+                self.reset()
                 self.state_manager.transition(
                     AgentState.ERROR,
                     "material supply timeout"
@@ -31,8 +32,14 @@ class BuilderBot(BaseAgent):  ###builder de prova
          # si estat=running i tinc BOM, seguent fase
         if self.state_manager.is_running() and self.bom:
             phase = self.bom.current_phase()
-            if phase:
-                return phase
+            if phase is None: #s'ha acabat la última fase
+                    self.mc.post_chat("Builder: s'han constuit totes les fases")
+                    self.state_manager.transition(
+                        AgentState.IDLE,
+                        "Fi construcció"
+                    )
+                    return None
+            return phase
             
         return None
 
@@ -63,6 +70,7 @@ class BuilderBot(BaseAgent):  ###builder de prova
             try:
                 map_data = MapData(**msg.payload)
             except TypeError:
+                self.reset()
                 self.state_manager.transition(
                     AgentState.ERROR,
                     "map.v1 invalid"
@@ -95,3 +103,8 @@ class BuilderBot(BaseAgent):  ###builder de prova
             BOMPhase("roof", "wood", flat_size)
         ]
         return BOM(phases)
+
+
+def reset(self):
+    self.bom= None
+    self.current_invetory= 0
