@@ -2,11 +2,12 @@ from abc import ABC, abstractmethod
 import sys
 import os
 
-#importo mòduls de la carpeta superior
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from message_bus import MessageBus
-from message import Message
+from application.state_manager import StateManager
+from application.agent_state import AgentState
+import logging
+log = logging.getLogger(__name__)
+from messaging.message import Message
 
 
 class BaseAgent(ABC):
@@ -14,16 +15,13 @@ class BaseAgent(ABC):
     Classe base em defineix el cicle de vida de qualssevol agent.
     Patrons: Template Method + State Machine ; Pub/Sub pero conectar amb el MessageBus.
     """
-    def __init__(self, name, mc):
+    def __init__(self, name, mc, bus):
         self.name = name
         self.mc = mc
+        self.bus=bus
 
-        # Màquina d'estats: IDLE, RUNNING, PAUSED, WAITING, STOPPED, ERROR
-        self.state = "IDLE" 
-
-        # Subscripció al bus:
-        self.bus = MessageBus()
-        self.bus.register(self.name) # com a l'observer, cada agent s'autoinscriu a les notícies. (al Bus)
+        self.state_manager = StateManager(self.name) 
+        self.bus.register(self.name) # cada agent s'autoinscriu al Bus (pub/sub)
 
 
 
@@ -31,12 +29,14 @@ class BaseAgent(ABC):
         """
         Quan l'estat és RUNNING, s'executa a cada cicle del joc.
         """
+
+        #print(f"[TICK] {self.name} estat={self.state_manager.state}")
         #buido la bústia
         incoming_messages = self.bus.receive(self.name)
         for msg in incoming_messages:
             self.process_message(msg)
 
-        if self.state == "RUNNING":
+        if self.state_manager.is_running():
             perception = self.perceive()
             action = self.decide(perception)
             self.act(action)
@@ -50,20 +50,21 @@ class BaseAgent(ABC):
         self.bus.send(msg)
         
         # Log de sortida per traçabilitat
-        print(f"OUT [{self.name}] >> {msg_type} -> {target}")
+        log.info(f"OUT [{self.name}] >> {msg_type} -> {target}")
 
     def process_message(self, msg):
         """Pel PROCESSAMENT dels missatges.(Comandes de control) """
 
         # Log d'entrada per traçabilitat
-        print(f"IN  [{self.name}] << {msg.msg_type} de {msg.source}")
+        log.info(f"IN  [{self.name}] << {msg.msg_type} de {msg.source}")
         
         # Canvia l'estat si son comandes de control: estats: IDLE,RUNNING PAUSED, WAITING,STOPPED,ERROR 
         if msg.msg_type == "command.control":
             cmd = msg.payload.get("command")
-            if cmd == "pause": self.set_state("PAUSED")
-            elif cmd == "resume": self.set_state("RUNNING")
-            elif cmd == "stop": self.set_state("IDLE")
+            if cmd == "start": self.state_manager.transition(AgentState.RUNNING, "start command")
+            elif cmd == "pause": self.state_manager.transition(AgentState.PAUSED, "pause command")
+            elif cmd == "resume": self.state_manager.transition(AgentState.RUNNING, "start command")
+            elif cmd == "stop": self.state_manager.transition(AgentState.IDLE, "stop command")
 
         #no vull que els fills estiguin cridant al pare (desacoblo amb un altre met)
         self.on_message_received(msg) 
@@ -72,10 +73,6 @@ class BaseAgent(ABC):
         #per defecte no fa res (HOOK)
 
         pass
-    def set_state(self, new_state):
-        """Canvia l'estat i avisa."""
-        print(f"[{self.name}] Canvi d'estat: {self.state} -> {new_state}")
-        self.state = new_state
 
     # mètodes abstractes pels overrides dels fills ---
     @abstractmethod
