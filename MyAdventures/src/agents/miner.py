@@ -26,6 +26,9 @@ class MinerBot(BaseAgent):
 
     def on_message_received(self, msg):
 
+        if msg.msg_type != "materials.requirements.v1":
+            return
+
         if msg.msg_type == "materials.requirements.v1":
             material = msg.payload.get("material")
             amount = msg.payload.get("amount")
@@ -66,3 +69,4 @@ class MinerBot(BaseAgent):
             AgentState.STOPPED,
             "materials anviats"
             )
+        

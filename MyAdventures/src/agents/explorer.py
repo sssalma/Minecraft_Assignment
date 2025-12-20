@@ -51,7 +51,7 @@ class ExplorerBot(BaseAgent):
         
         if not action:
             return
-
+        self.mc.post_chat("Explorer: mapa enviat al Builder")
         self.send_message(
             target="BuilderBot",
             msg_type="map.v1",
@@ -59,9 +59,9 @@ class ExplorerBot(BaseAgent):
         )
 
         self.state_manager.transition(
-            AgentState.STOPPED,
-            "mapa enviat al builder"
-        )
+        AgentState.WAITING,
+        "esperant nova ordre"
+)
 
     
     def analyze_terrain(self, origin):
@@ -79,10 +79,7 @@ class ExplorerBot(BaseAgent):
                 x = ox + dx
                 z = oz + dz
                 y = mc.getHeight(x, z)
-
-                elevation_map[(x, z)] = y
-
-            # regió plana simple: mateixa altura que origen
+                elevation_map[(x, z)] = y # regió plana simple: mateixa altura que origen
                 if y == oy:
                     flat_region.append((x, y, z))
                 else:

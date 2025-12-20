@@ -73,7 +73,7 @@ class BuilderBot(BaseAgent):  ###builder de prova
 
             self.state_manager.transition(
                 AgentState.RUNNING,
-                "BOM generat a partir del mapa"
+                "generant BOM a partir del mapa"
             )
         #rebo material
         elif msg.msg_type == "material.supply":

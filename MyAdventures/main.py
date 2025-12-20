@@ -1,7 +1,8 @@
 import sys
 import os
 import time
-
+import logging
+logging.basicConfig(level=logging.INFO)
 # Añadimos src al path
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 

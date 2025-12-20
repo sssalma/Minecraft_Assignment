@@ -59,16 +59,45 @@ class BaseAgent(ABC):
         log.info(f"IN  [{self.name}] << {msg.msg_type} de {msg.source}")
         
         # Canvia l'estat si son comandes de control: estats: IDLE,RUNNING PAUSED, WAITING,STOPPED,ERROR 
+        # === Comandos de control ===
         if msg.msg_type == "command.control":
             cmd = msg.payload.get("command")
-            if cmd == "start": self.state_manager.transition(AgentState.RUNNING, "start command")
-            elif cmd == "pause": self.state_manager.transition(AgentState.PAUSED, "pause command")
-            elif cmd == "resume": self.state_manager.transition(AgentState.RUNNING, "start command")
-            elif cmd == "stop": self.state_manager.transition(AgentState.IDLE, "stop command")
 
-        #no vull que els fills estiguin cridant al pare (desacoblo amb un altre met)
-        self.on_message_received(msg) 
+            if cmd == "start":
+            # Solo arrancar si está parado o idle
+                if self.state_manager.is_state(AgentState.IDLE):
+                    self.state_manager.transition(
+                        AgentState.RUNNING,
+                        "start command"
+                        )
 
+            elif cmd == "pause":
+            # Solo se puede pausar si está ejecutando
+                if self.state_manager.is_running():
+                    self.state_manager.transition(
+                        AgentState.PAUSED,
+                        "pause command"
+                    )
+
+            elif cmd == "resume":
+            # Solo se puede reanudar desde PAUSED
+                if self.state_manager.is_state(AgentState.PAUSED):
+                    self.state_manager.transition(
+                        AgentState.RUNNING,
+                        "resume command"
+                    )
+
+            elif cmd == "stop":
+                # Stop siempre es seguro
+                if not self.state_manager.is_state(AgentState.STOPPED):
+                    self.state_manager.transition(
+                        AgentState.STOPPED,
+                        "stop command"
+                    )
+        # IMPORTANTE: los comandos de control NO se propagan a los hijos
+            return
+        # === Mensajes de dominio ===
+        self.on_message_received(msg)
     def on_message_received(self,msg):
         #per defecte no fa res (HOOK)
 

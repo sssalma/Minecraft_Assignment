@@ -18,6 +18,7 @@ ALLOWED_TRANSITIONS = {
             AgentState.STOPPED
         },
         AgentState.RUNNING: {
+            AgentState.IDLE,
             AgentState.PAUSED,
             AgentState.WAITING,
             AgentState.ERROR,
