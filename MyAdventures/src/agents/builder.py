@@ -1,15 +1,20 @@
 from .agent_base import BaseAgent
 from application.agent_state import AgentState
 import time
+from domain.inventory import Inventory
 from domain.map_data import MapData
 from domain.bom import BOM, BOMPhase
+from construction.planners.build_planner import BuildPlanner
+from construction.executors.build_executor import BuildExecutor
 
-class BuilderBot(BaseAgent):  ###builder de prova
+
+class BuilderBot(BaseAgent):  ###builder de en el mon real
     def __init__(self, mc,bus):
         super().__init__("BuilderBot", mc, bus)
 
         self.bom = None
-
+        self.map_data=None
+        self.inventory = Inventory()
         self.required_amount = 0
         self.current_inventory = 0
         self.last_material_time = 0
@@ -32,12 +37,7 @@ class BuilderBot(BaseAgent):  ###builder de prova
          # si estat=running i tinc BOM, seguent fase
         if self.state_manager.is_running() and self.bom:
             phase = self.bom.current_phase()
-            if phase is None: #s'ha acabat la última fase
-                    self.mc.post_chat("Builder: s'han constuit totes les fases")
-                    self.state_manager.transition(
-                        AgentState.IDLE,
-                        "Fi construcció"
-                    )
+            if phase is None: 
                     return None
             return phase
             
@@ -68,7 +68,7 @@ class BuilderBot(BaseAgent):  ###builder de prova
         #rebo el mapa
         if msg.msg_type == "map.v1":
             try:
-                map_data = MapData(**msg.payload)
+                self.map_data = MapData(**msg.payload)
             except TypeError:
                 self.reset()
                 self.state_manager.transition(
@@ -77,34 +77,77 @@ class BuilderBot(BaseAgent):  ###builder de prova
                 ) 
                 return
             #genera el BOM
-            self.bom = self.generate_bom(map_data)
+            self.bom = self.generate_bom(self.map_data)
 
             self.state_manager.transition(
                 AgentState.RUNNING,
                 "generant BOM a partir del mapa"
             )
         #rebo material
-        elif msg.msg_type == "material.supply":
-            self.current_inventory += msg.payload.get("amount", 0)
+        elif msg.msg_type == "material.supply": #PER ACLARARRRRRR
+            amount = msg.payload.get("amount", 0)
+            material = msg.payload.get("material")
+
+            self.inventory.add(material, amount)
+            self.current_inventory += amount
             self.last_material_time = time.time()
 
             if self.current_inventory >= self.required_amount:
                 self.bom.advance()
+
+                if self.bom.current_phase() is None:
+                    self.start_construction()
+                    return
+
                 self.state_manager.transition(
                     AgentState.RUNNING,
                     "fase completada, avançant"
                 )
-    def generate_bom(self, map_data):
+
+    def generate_bom(self, map_data): 
+        #decisions de disseny: per tenir 2 opcions de construccio en funcio del terreny pla
         flat_size = len(map_data.flat_region)
+        if flat_size <10:
+            phases = [
+                BOMPhase("foundations", "stone", 2),
+                BOMPhase("walls", "stone", 3),
+                BOMPhase("roof", "wood", 1)
+            ]
+        else: 
+            phases = [
+                BOMPhase("foundations", "stone", 4),
+                BOMPhase("walls", "wood", 6),
+                BOMPhase("roof", "wood", 2)
+            ]
 
-        phases = [
-            BOMPhase("foundations", "stone", flat_size * 2),
-            BOMPhase("walls", "stone", flat_size * 3),
-            BOMPhase("roof", "wood", flat_size)
-        ]
         return BOM(phases)
+    
+
+    def start_construction(self):
+        try:
+            planner = BuildPlanner(self.map_data, self.bom)
+            build_plan = planner.create_plan()
+
+            executor = BuildExecutor(self.mc, self.inventory)
+            executor.execute(build_plan)
+
+            self.mc.post_chat("Builder: s'han construït totes les fases")
+
+            self.state_manager.transition(
+                AgentState.STOPPED,
+                "Fi construcció"
+            )
+
+        except Exception as e:
+            self.reset()
+            self.state_manager.transition(
+                AgentState.ERROR,
+                f"Error durant la construcció: {e}"
+        )
 
 
-def reset(self):
-    self.bom= None
-    self.current_invetory= 0
+    def reset(self):
+        self.bom= None
+        self.current_invetory= 0
+        self.map_data= None
+        self.required_amount=None

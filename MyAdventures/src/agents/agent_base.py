@@ -106,7 +106,7 @@ class BaseAgent(ABC):
         pass
     
     #mètode per fer reset quan state = error
-    def reset():
+    def reset(self):
         pass
 
     # mètodes abstractes pels overrides dels fills ---

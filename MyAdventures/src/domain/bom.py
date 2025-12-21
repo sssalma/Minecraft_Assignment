@@ -1,6 +1,6 @@
 class BOMPhase:
 
-    #es com un iterador de fases
+    #es com un iterador de fases del bom
     def __init__(self, name, material, amount):
         self.name = name
         self.material = material

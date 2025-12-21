@@ -94,5 +94,5 @@ class ExplorerBot(BaseAgent):
             obstacles=obstacles
     )
 
-def reset(self):
-    self.failed_searches = 0
+    def reset(self):
+        self.failed_searches = 0

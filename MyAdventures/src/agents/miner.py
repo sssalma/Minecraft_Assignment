@@ -88,7 +88,7 @@ class MinerBot(BaseAgent):
         
 
         # RESPOSTA AL BUILDER
-        
+
         self.send_message(
             target="BuilderBot",
             msg_type="material.supply",
@@ -102,3 +102,5 @@ class MinerBot(BaseAgent):
             "materials anviats"
             )
         
+    def reset(self):
+        self.strategy = VerticalMining()
