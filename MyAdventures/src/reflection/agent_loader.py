@@ -19,7 +19,7 @@ class AgentLoader:
 
                 for _, obj in inspect.getmembers(module, inspect.isclass):
                     if issubclass(obj, BaseAgent) and obj is not BaseAgent:
-                        print("Classe trobada:", obj, "abstracta?", inspect.isabstract(obj))
+                        #print("Classe trobada:", obj, "abstracta?", inspect.isabstract(obj))
                         agents.append(obj(mc_client,self.bus))
 
         return agents
