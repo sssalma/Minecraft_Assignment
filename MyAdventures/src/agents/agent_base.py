@@ -3,11 +3,11 @@ import sys
 import os
 
 
-from application.state_manager import StateManager
-from application.agent_state import AgentState
+from src.application.state_manager import StateManager
+from src.application.agent_state import AgentState
 import logging
 log = logging.getLogger(__name__)
-from messaging.message import Message
+from  src.messaging.message import Message
 
 
 class BaseAgent(ABC):
@@ -21,21 +21,13 @@ class BaseAgent(ABC):
         self.bus=bus
 
         self.state_manager = StateManager(self.name) 
-        self.bus.register(self.name) # cada agent s'autoinscriu al Bus (pub/sub)
-
+    
 
 
     def run_step(self):
         """
         Quan l'estat és RUNNING, s'executa a cada cicle del joc.
         """
-
-        #print(f"[TICK] {self.name} estat={self.state_manager.state}")
-        #buido la bústia
-        incoming_messages = self.bus.receive(self.name)
-        for msg in incoming_messages:
-            self.process_message(msg)
-
         if self.state_manager.is_running():
             perception = self.perceive()
             action = self.decide(perception)
@@ -102,7 +94,6 @@ class BaseAgent(ABC):
         self.on_message_received(msg)
     def on_message_received(self,msg):
         #per defecte no fa res (HOOK)
-
         pass
     
     #mètode per fer reset quan state = error

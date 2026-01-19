@@ -1,6 +1,6 @@
 from .agent_base import BaseAgent
-from application.agent_state import AgentState
-from domain.map_data import MapData
+from src.application.agent_state import AgentState
+from src.domain.map_data import MapData
 
 
 class ExplorerBot(BaseAgent):

@@ -1,10 +1,10 @@
 from .agent_base import BaseAgent
-from application.agent_state import AgentState
-from domain.inventory import Inventory
-from strategies.mining.vertical_mining import VerticalMining
-from strategies.mining.grid_mining import GridMining
-from strategies.mining.mining_interface import MiningStrategy
-from strategies.mining.vein_mining import VeinMining
+from src.application.agent_state import AgentState
+from src.domain.inventory import Inventory
+from src.strategies.mining.vertical_mining import VerticalMining
+from src.strategies.mining.grid_mining import GridMining
+from src.strategies.mining.mining_interface import MiningStrategy
+from src.strategies.mining.vein_mining import VeinMining
 
 import time
 

@@ -14,7 +14,7 @@ class ChatListener:
 
     def listen(self):
         try:
-            chat_events = self.mc.poll_chat()
+            chat_events = self.mc.events.pollChatPosts()
         except ValueError as e:
         # Error conegut de mcpi amb certs missatges
             print("[ChatListener] Error llegint el xat:", e)

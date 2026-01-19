@@ -1,7 +1,7 @@
 import os
 import importlib
 import inspect
-from agents.agent_base import BaseAgent
+from src.agents.agent_base import BaseAgent
 
 class AgentLoader:
     def __init__(self, bus):
@@ -15,7 +15,7 @@ class AgentLoader:
 
         for filename in os.listdir(agents_dir):
             if filename.endswith(".py") and filename != "__init__.py":
-                module = importlib.import_module(f"agents.{filename[:-3]}")
+                module = importlib.import_module(f"src.agents.{filename[:-3]}")
 
                 for _, obj in inspect.getmembers(module, inspect.isclass):
                     if issubclass(obj, BaseAgent) and obj is not BaseAgent:

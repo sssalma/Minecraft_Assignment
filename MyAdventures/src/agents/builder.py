@@ -1,11 +1,11 @@
 from .agent_base import BaseAgent
-from application.agent_state import AgentState
+from src.application.agent_state import AgentState
 import time
-from domain.inventory import Inventory
-from domain.map_data import MapData
-from domain.bom import BOM, BOMPhase
-from construction.planners.build_planner import BuildPlanner
-from construction.executors.build_executor import BuildExecutor
+from src.domain.inventory import Inventory
+from src.domain.map_data import MapData
+from src.domain.bom import BOM, BOMPhase
+from src.construction.planners.build_planner import BuildPlanner
+from src.construction.executors.build_executor import BuildExecutor
 
 
 class BuilderBot(BaseAgent):  ###builder de en el mon real
@@ -101,7 +101,7 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
 
                 self.state_manager.transition(
                     AgentState.RUNNING,
-                    "fase completada, avançant"
+                    "fase completada, avanÃ§ant"
                 )
 
     def generate_bom(self, map_data): 
@@ -131,18 +131,18 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
             executor = BuildExecutor(self.mc, self.inventory)
             executor.execute(build_plan)
 
-            self.mc.post_chat("Builder: s'han construït totes les fases")
+            self.mc.post_chat("Builder: s'han construÃ¯t totes les fases")
 
             self.state_manager.transition(
                 AgentState.STOPPED,
-                "Fi construcció"
+                "Fi construcciÃ³"
             )
 
         except Exception as e:
             self.reset()
             self.state_manager.transition(
                 AgentState.ERROR,
-                f"Error durant la construcció: {e}"
+                f"Error durant la construcciÃ³: {e}"
         )
 
 
