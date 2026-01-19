@@ -1,5 +1,5 @@
 import asyncio
-import src.messaging.validator as MessageValidator
+from src.messaging.validator import MessageValidator
 
 class MessageBus:
     """
@@ -61,12 +61,12 @@ class MessageBus:
         if target == "ALL":
             for name, handler in self.subscribers.items():
                 if name != message.source:
-                    handler(message)
+                    asyncio.create_task(handler(message))
             return
 
         handler = self.subscribers.get(target)
         if handler:
-            handler(message)
+            asyncio.create_task(handler(message))
         else:
             print(f"[MessageBus] Destinatari desconegut: {target}")
 

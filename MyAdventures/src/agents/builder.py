@@ -64,7 +64,7 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
                 "materials demanats al miner"
             )
  
-    def on_message_received(self, msg):
+    async def on_message_received(self, msg):
         #rebo el mapa
         if msg.msg_type == "map.v1":
             try:
@@ -101,7 +101,7 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
 
                 self.state_manager.transition(
                     AgentState.RUNNING,
-                    "fase completada, avanÃ§ant"
+                    "fase completada, avansant"
                 )
 
     def generate_bom(self, map_data): 
@@ -131,18 +131,18 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
             executor = BuildExecutor(self.mc, self.inventory)
             executor.execute(build_plan)
 
-            self.mc.post_chat("Builder: s'han construÃ¯t totes les fases")
+            self.mc.post_chat("Builder: s'han construit totes les fases")
 
             self.state_manager.transition(
                 AgentState.STOPPED,
-                "Fi construcciÃ³"
+                "Fi construccio"
             )
 
         except Exception as e:
             self.reset()
             self.state_manager.transition(
                 AgentState.ERROR,
-                f"Error durant la construcciÃ³: {e}"
+                f"Error durant la construccio: {e}"
         )
 
 

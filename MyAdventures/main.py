@@ -10,7 +10,7 @@ import logging
 # Configurar sistema de logging
 logging.basicConfig(
     level=logging.INFO,
-    format='[%(asctime)s] %(name)s - %(levelname)s - %(message)s'
+    format='%(message)s'
 )
 
 # Afegir directori src al path de Python
@@ -21,16 +21,15 @@ from src.messaging.message_bus import MessageBus
 from src.application.coordinator import Coordinator
 from src.reflection.agent_loader import AgentLoader
 from src.infrastructure.minecraft.chat_listener import ChatListener
-from mcpi.minecraft import Minecraft
-
+from src.infrastructure.minecraft.mc_client import MinecraftClient
 
 async def async_main():
     """Funcio principal asincrona que gestiona el bus i el bucle de ticks."""
     
     os.chdir(script_dir)
     
-    mc = Minecraft.create()
-    mc.postToChat("Sistema TAP inicialitzat. Esperant comandes...")
+    mc = MinecraftClient()
+    mc.post_chat("Sistema TAP inicialitzat. Esperant comandes...")
     print("[Main] Connectat a Minecraft")
 
 
@@ -75,7 +74,7 @@ async def async_main():
         # Aturar el bus abans de sortir
         await coordinator.stop_agents()
         await coordinator.stop()
-        mc.postToChat("Sistema TAP aturat.")
+        mc.post_chat("Sistema TAP aturat.")
         print("[Main] Sistema aturat correctament")
 
 

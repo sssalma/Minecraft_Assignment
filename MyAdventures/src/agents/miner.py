@@ -31,7 +31,7 @@ class MinerBot(BaseAgent):
     def act(self, action):
         pass
 
-    def on_message_received(self, msg):
+    async def on_message_received(self, msg):
 
         # CANVI D'ESTRATÈGIA (runtime)
 
@@ -49,7 +49,6 @@ class MinerBot(BaseAgent):
             elif strategy_name == "vein":
                 self.strategy = VeinMining()
                 self.mc.post_chat("Miner: estratègia canviada a VEIN")
-
             else:
                 self.mc.post_chat(f"Miner: estratègia desconeguda {strategy_name}, mantening l'actual")
             return
@@ -78,7 +77,18 @@ class MinerBot(BaseAgent):
             f"minant {amount} {material}"
         )
 
-        supplied = self.strategy.mine(self, material, amount)
+        available = self.inventory.available(material)
+        supplied = min(amount, available)
+
+        if supplied <= 0:
+            self.state_manager.transition(
+                AgentState.ERROR,
+                f"No hi ha {material} disponible"
+            )
+            return
+
+        self.inventory.consume(material, supplied)
+
         if supplied <=0:
             self.state_manager.transition(
                 AgentState.ERROR,
@@ -98,8 +108,8 @@ class MinerBot(BaseAgent):
                 }
             )
         self.state_manager.transition(
-            AgentState.STOPPED,
-            "materials anviats"
+            AgentState.WAITING,
+            "materials enviats"
             )
         
     def reset(self):
