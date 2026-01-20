@@ -96,6 +96,10 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
                 self.bom.advance()
 
                 if self.bom.current_phase() is None:
+                    self.state_manager.transition(
+                    AgentState.RUNNING,
+                    "construint"
+                )
                     self.start_construction()
                     return
 
@@ -134,7 +138,7 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
             self.mc.post_chat("Builder: s'han construit totes les fases")
 
             self.state_manager.transition(
-                AgentState.STOPPED,
+                AgentState.WAITING,
                 "Fi construccio"
             )
 
@@ -144,7 +148,6 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
                 AgentState.ERROR,
                 f"Error durant la construccio: {e}"
         )
-
 
     def reset(self):
         self.bom= None

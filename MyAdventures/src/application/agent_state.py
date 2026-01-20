@@ -2,8 +2,8 @@ from enum import Enum
 
 class AgentState(Enum):
     
-    #FSM = estats i transicions entre estats
-    #Estats
+    
+    #FSM millorada
     IDLE = "IDLE"
     RUNNING = "RUNNING"
     PAUSED = "PAUSED"
@@ -31,7 +31,8 @@ ALLOWED_TRANSITIONS = {
         AgentState.WAITING: {
             AgentState.RUNNING,
             AgentState.ERROR,
-            AgentState.STOPPED
+            AgentState.STOPPED,
+            AgentState.WAITING
         },
         AgentState.ERROR: {
             AgentState.STOPPED
