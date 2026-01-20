@@ -1,5 +1,5 @@
 import time
-
+import src.runtime.workflow_manager as workflow_manager
 
 class ChatListener:
     """
@@ -8,9 +8,9 @@ class ChatListener:
     """
 
 
-    def __init__(self, mc_client, coordinator):
+    def __init__(self, mc_client, workflow_manager):
         self.mc = mc_client
-        self.coordinator= coordinator
+        self.workflow_manager = workflow_manager
 
     def listen(self):
         try:
@@ -26,7 +26,7 @@ class ChatListener:
     def handle_command(self, message: str):
         """
         Traducció pel coordinador.
-        """
+       
         if message == "pause":
             self.coordinator.send_control("ALL", "pause")
 
@@ -35,11 +35,24 @@ class ChatListener:
 
         elif message == "stop":
             self.coordinator.send_control("ALL", "stop")
+ """
+        if message == "explorer start":
+            wf_id = self.workflow_manager.start_workflow()
+            print(f"Workflow {wf_id} iniciat.")
 
-        elif message == "explorer start":
-            self.coordinator.send_control("ExplorerBot", "start")
-        elif message.startswith("miner set strategy"):
+
+        elif message == "stop":
+            self.workflow_manager.stop_workflow()
+            self.mc.post_chat("Workflow aturat")
+
+        elif message == "workflow list":
+            ids = self.workflow_manager.list_workflows()
+            self.mc.post_chat(f"Workflows actius: {ids}")
+
+
+        """elif message.startswith("miner set strategy"):
             parts = message.split()
             if len(parts) == 4:
                 strategy = parts[3] #la strategy serà la següent paraula
                 self.coordinator.send_strategy("MinerBot", strategy)
+ """

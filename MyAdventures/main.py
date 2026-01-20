@@ -7,21 +7,30 @@ import os
 import asyncio
 import logging
 
+from logging_decorator.LogDecorator import LogDecorator
+
+from src.infrastructure.minecraft.chat_listener import ChatListener
+from src.infrastructure.minecraft.mc_client import MinecraftClient
+from src.runtime.workflow_manager import WorkflowManager
+
+
+#preparo DECORATOR per afegir workflow id als logs
+_original_factory = logging.getLogRecordFactory() #el passaré pel const
+workflow_factory = LogDecorator(_original_factory)
+logging.setLogRecordFactory(workflow_factory)
+
 # Configurar sistema de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(message)s'
 )
 
+
+
 # Afegir directori src al path de Python
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, script_dir)
 
-from src.messaging.message_bus import MessageBus
-from src.application.coordinator import Coordinator
-from src.reflection.agent_loader import AgentLoader
-from src.infrastructure.minecraft.chat_listener import ChatListener
-from src.infrastructure.minecraft.mc_client import MinecraftClient
 
 async def async_main():
     """Funcio principal asincrona que gestiona el bus i el bucle de ticks."""
@@ -32,31 +41,9 @@ async def async_main():
     mc.post_chat("Sistema TAP inicialitzat. Esperant comandes...")
     print("[Main] Connectat a Minecraft")
 
-
-    # Crear instàncies del bus i coordinador
-    bus = MessageBus()
-    coordinator = Coordinator(bus)
-
-    # Carregar agents dinamicament amb reflection
-    loader = AgentLoader(bus)
-    agents = loader.load(mc)
-    
-    if len(agents) == 0:
-        print("[Main] ADVERTÈNCIA: cap agent carregat")
-
-    # Registrar agents
-    for agent in agents:
-        coordinator.register_agent(agent)
-
-
-    # Iniciar el bus (passant per la capa del coordinador)
-    await coordinator.start()
-    print("[Main] Bus de missatges iniciat")
-    await coordinator.start_agents()
-
-
+    workflow_manager = WorkflowManager()
     # Crear ChatListener per escoltar comandes
-    chat_listener = ChatListener(mc, coordinator)
+    chat_listener = ChatListener(mc, workflow_manager)
     print("[Main] Sistema llest. Escriu comandes al xat de Minecraft.")
 
     # Bucle principal
@@ -72,8 +59,6 @@ async def async_main():
         print("\n[Main] Aturant sistema...")
     finally:
         # Aturar el bus abans de sortir
-        await coordinator.stop_agents()
-        await coordinator.stop()
         mc.post_chat("Sistema TAP aturat.")
         print("[Main] Sistema aturat correctament")
 
