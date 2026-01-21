@@ -53,8 +53,7 @@ class BaseAgent(ABC):
         if self.state_manager.is_state(AgentState.STOPPED) or \
             self.state_manager.is_state(AgentState.ERROR):
             return
-        # Canvia l'estat si son comandes de control: estats: IDLE,RUNNING PAUSED, WAITING,STOPPED,ERROR 
-        # === Comandos de control ===
+        # Canvia l'estat si son comandes de control comunes!!!
         if msg.msg_type == "command.control":
             cmd = msg.payload.get("command")
 
@@ -91,9 +90,8 @@ class BaseAgent(ABC):
                         "stop command"
                     )
                     
-        # IMPORTANTE: los comandos de control NO se propagan a los hijos
             return
-        # === Mensajes de dominio ===
+        
         await self.on_message_received(msg)
     async def on_message_received(self,msg):
         #per defecte no fa res (HOOK)

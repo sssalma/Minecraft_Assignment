@@ -65,6 +65,7 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
             )
  
     async def on_message_received(self, msg):
+        await super().on_message_received(msg)
         #rebo el mapa
         if msg.msg_type == "map.v1":
             try:

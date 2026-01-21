@@ -32,7 +32,7 @@ class MinerBot(BaseAgent):
         pass
 
     async def on_message_received(self, msg):
-
+        await super().on_message_received(msg)
         # CANVI D'ESTRATÈGIA (runtime)
 
         if msg.msg_type == "command.strategy":

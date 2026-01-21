@@ -26,8 +26,12 @@ class AgentRunner:
         try:
             while self._running:
                 state = self.agent.state_manager.state
-
                 # STOP definitiu
+
+                if state == AgentState.PAUSED:
+                    await asyncio.sleep(self.tick_interval)
+                    continue
+
                 if state in (AgentState.STOPPED, AgentState.ERROR):
                     print(f"[Runner] {self.agent.name} finalitzat (state={state.value})")
                     break
