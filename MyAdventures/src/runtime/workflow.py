@@ -8,6 +8,7 @@ from src.messaging.message_bus import MessageBus
 from src.application.coordinator import Coordinator
 from src.reflection.agent_loader import AgentLoader
 from src.application.agent_state import AgentState
+from src.runtime.workflow_observer import WorkflowObserver
 
 log = logging.getLogger(__name__)
 
@@ -47,6 +48,11 @@ class Workflow(threading.Thread):
         self.agents = loader.load(self.mc)
         for agent in self.agents:
             self.coordinator.register_agent(agent)
+        #ja existeixen els agents-> els faig observers dels canvis d'estat
+        self.observer = WorkflowObserver(self.id)
+        for agent in self.agents:
+            agent.state_manager.add_observer(self.observer)
+
 
         await self.coordinator.start()
         await self.coordinator.start_agents()

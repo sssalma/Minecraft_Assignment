@@ -108,23 +108,26 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
                     "fase completada, avansant"
                 )
 
-    def generate_bom(self, map_data): 
-        #decisions de disseny: per tenir 2 opcions de construccio en funcio del terreny pla
+    def generate_bom(self, map_data):
+
         flat_size = len(map_data.flat_region)
-        if flat_size <10:
-            phases = [
-                BOMPhase("foundations", "stone", 2),
-                BOMPhase("walls", "stone", 3),
-                BOMPhase("roof", "wood", 1)
-            ]
-        else: 
-            phases = [
-                BOMPhase("foundations", "stone", 4),
-                BOMPhase("walls", "wood", 6),
-                BOMPhase("roof", "wood", 2)
-            ]
+
+        if flat_size < 10:
+        # Construcció SIMPLE
+           phases = [
+            BOMPhase("foundations", "stone", 3),
+            BOMPhase("walls", "stone", 2)
+           ]
+        else:
+        # Construcció COMPLETA
+          phases = [
+            BOMPhase("foundations", "stone", 4),
+            BOMPhase("walls", "stone", 4),
+            BOMPhase("roof", "stone", 2)
+          ]
 
         return BOM(phases)
+
     
 
     def start_construction(self):
