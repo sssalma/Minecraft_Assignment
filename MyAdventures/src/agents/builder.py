@@ -87,9 +87,15 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
         #rebo material
         elif msg.msg_type == INVENTORY_V1: 
             amount = msg.payload.get("amount", 0)
-            material = msg.payload.get("material")
+            
+            #material = msg.payload.get("material")
+            #decisió simplicitat: considero el material correcte(miro solament quantitat.) 
+            current_phase = self.bom.current_phase()
+            material = current_phase.material if current_phase else None
 
-            self.inventory.add(material, amount)
+            if material:
+                self.inventory.add(material, amount)
+
             self.current_inventory += amount
             self.last_material_time = time.time()
 
@@ -117,14 +123,14 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
         # Construcció SIMPLE
            phases = [
             BOMPhase("foundations", "stone", 3),
-            BOMPhase("walls", "stone", 2)
+            BOMPhase("walls", "wood", 2)
            ]
         else:
         # Construcció COMPLETA
           phases = [
             BOMPhase("foundations", "stone", 4),
-            BOMPhase("walls", "stone", 4),
-            BOMPhase("roof", "stone", 2)
+            BOMPhase("walls", "wood", 4),
+            BOMPhase("roof", "wood", 2)
           ]
 
         return BOM(phases)

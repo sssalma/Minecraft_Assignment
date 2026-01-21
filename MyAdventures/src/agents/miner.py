@@ -56,7 +56,7 @@ class MinerBot(BaseAgent):
 
         if msg.msg_type != "materials.requirements.v1":
             return
-        
+
         material = msg.payload.get("material")
         amount = msg.payload.get("amount")
 
@@ -74,23 +74,21 @@ class MinerBot(BaseAgent):
         )
         # EXECUCIÓ DE LA MINERIA VIA STRATEGY
         extracted = self.strategy.mine(self, amount)
-        real_amount = extracted.get(material,0)
-        if real_amount <=0 :
+        total_amount = sum(extracted.values()) #decisió de disseny:per simplicitat, només tinc en compte la quantitat.
+        if total_amount <=0 :
             self.state_manager.transition(
                 AgentState.ERROR,
                 f"No s'ha pogut extreure {material}"
             )
-            return
-        #self.inventory.add(material, extracted) 
-        
+            return    
         # RESPOSTA AL BUILDER
 
         self.send_message(
             target="BuilderBot",
             msg_type=INVENTORY_V1,
             payload={
-                "material": material,
-                "amount": real_amount
+                "material": "generic",
+                "amount": total_amount
                 }
             )
         self.state_manager.transition(

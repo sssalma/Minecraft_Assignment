@@ -66,8 +66,9 @@ class BaseAgent(ABC):
                         )
 
             elif cmd == "pause":
-            # Solo se puede pausar si está ejecutando
-                if self.state_manager.is_running():
+            # criteri: puc pausarlo si està
+                if self.state_manager.is_running() or \
+       self.state_manager.is_state(AgentState.WAITING):
                     self.state_manager.transition(
                         AgentState.PAUSED,
                         "pause command"
