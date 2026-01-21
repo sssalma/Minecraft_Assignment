@@ -7,7 +7,7 @@ class MiningStrategy(ABC):
     """
 
     @abstractmethod
-    def mine(self, miner, material: str, amount: int) -> int:
+    def mine(self, miner,amount: int) -> dict:
         """
         Executa l'estratègia de mineria.
 

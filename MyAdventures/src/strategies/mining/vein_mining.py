@@ -1,25 +1,51 @@
 import time
+import mcpi.block as block
 from .mining_interface import MiningStrategy
 
+
 class VeinMining(MiningStrategy):
-    """
-    Per simular l'excavació VeinMining (trencar blocs conectats)"""
 
-    def mine(self, miner, material: str, amount: int) -> int:
-        miner.mc.post_chat(
-            f"Miner: mineria per vetes de {amount} {material}"
-        )
+    def block_to_material(self, block_id: int) -> str:
+        if block_id == 1:
+            return "stone"
+        if block_id == 17:
+            return "wood"
+        if block_id in (2, 3):
+            return "dirt"
+        return "other"
 
-       #per testeig
-        time.sleep(2)
+    def mine(self, miner, amount):
+        mc = miner.mc.get_mc()
+        pos = mc.player.getTilePos()
 
-        available = miner.inventory.available(material)
+        mined = {}
+        mined_count = 0
 
-        if available <= 0:
-            return 0
+        miner.mc.post_chat("Miner: mineria per vetes REAL")
 
-        # Simulem millor rendiment (fins a +20%)
-        bonus = int(amount * 0.2)
-        effective_amount = amount + bonus
+        # centre + veïns (cross)
+        positions = [
+            (pos.x, pos.y - 1, pos.z),
+            (pos.x + 1, pos.y - 1, pos.z),
+            (pos.x - 1, pos.y - 1, pos.z),
+            (pos.x, pos.y - 1, pos.z + 1),
+            (pos.x, pos.y - 1, pos.z - 1),
+        ]
 
-        return min(available, effective_amount)
+        for x, y, z in positions:
+            if mined_count >= amount:
+                break
+
+            block_id = mc.getBlock(x, y, z)
+            if block_id in (0, 7, 8, 9, 10, 11):
+                continue
+
+            mc.setBlock(x, y, z, block.AIR.id)
+
+            material = self.block_to_material(block_id)
+            mined[material] = mined.get(material, 0) + 1
+            mined_count += 1
+
+            time.sleep(0.15)
+
+        return mined

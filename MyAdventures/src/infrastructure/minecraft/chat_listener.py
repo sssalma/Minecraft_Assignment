@@ -24,18 +24,7 @@ class ChatListener:
             self.handle_command(message)            #es processar
 
     def handle_command(self, message: str):
-        """
-        Traducció pel coordinador.
-       
-        if message == "pause":
-            self.coordinator.send_control("ALL", "pause")
-
-        elif message == "resume":
-            self.coordinator.send_control("ALL", "resume")
-
-        elif message == "stop":
-            self.coordinator.send_control("ALL", "stop")
- """
+        
         if message == "explorer start":
             wf_id = self.workflow_manager.start_workflow()
             print(f"Workflow {wf_id} iniciat.")
@@ -48,11 +37,3 @@ class ChatListener:
         elif message == "workflow list":
             ids = self.workflow_manager.list_workflows()
             self.mc.post_chat(f"Workflows actius: {ids}")
-
-
-        """elif message.startswith("miner set strategy"):
-            parts = message.split()
-            if len(parts) == 4:
-                strategy = parts[3] #la strategy serà la següent paraula
-                self.coordinator.send_strategy("MinerBot", strategy)
- """

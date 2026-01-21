@@ -5,8 +5,8 @@ from src.strategies.mining.vertical_mining import VerticalMining
 from src.strategies.mining.grid_mining import GridMining
 from src.strategies.mining.mining_interface import MiningStrategy
 from src.strategies.mining.vein_mining import VeinMining
+from src.messaging.message_types import INVENTORY_V1
 
-import time
 
 class MinerBot(BaseAgent):
     def __init__(self, mc, bus):
@@ -14,8 +14,8 @@ class MinerBot(BaseAgent):
         self.inventory = Inventory()
 
         # stock inicial testing
-        self.inventory.add("stone", 500)
-        self.inventory.add("wood", 200)
+        #self.inventory.add("stone", 500)
+        #self.inventory.add("wood", 200)
 
         #mining vertical per default
         self.strategy: MiningStrategy = VerticalMining()
@@ -51,9 +51,7 @@ class MinerBot(BaseAgent):
                 self.mc.post_chat("Miner: estratègia canviada a VEIN")
             else:
                 self.mc.post_chat(f"Miner: estratègia desconeguda {strategy_name}, mantening l'actual")
-            return
-        
-        
+            return                
         # PETICIÓ DE MATERIALS
 
         if msg.msg_type != "materials.requirements.v1":
@@ -69,42 +67,30 @@ class MinerBot(BaseAgent):
             )
             return
         
-        # EXECUCIÓ DE LA MINERIA
-
-  
+        # EXECUCIÓ DE LA MINERIA  
         self.state_manager.transition(
             AgentState.RUNNING,
             f"minant {amount} {material}"
         )
-
-        available = self.inventory.available(material)
-        supplied = min(amount, available)
-
-        if supplied <= 0:
+        # EXECUCIÓ DE LA MINERIA VIA STRATEGY
+        extracted = self.strategy.mine(self, amount)
+        real_amount = extracted.get(material,0)
+        if real_amount <=0 :
             self.state_manager.transition(
                 AgentState.ERROR,
-                f"No hi ha {material} disponible"
+                f"No s'ha pogut extreure {material}"
             )
             return
-
-        self.inventory.consume(material, supplied)
-
-        if supplied <=0:
-            self.state_manager.transition(
-                AgentState.ERROR,
-                f"No hi ha {material} disponible"
-            )
-            return
+        #self.inventory.add(material, extracted) 
         
-
         # RESPOSTA AL BUILDER
 
         self.send_message(
             target="BuilderBot",
-            msg_type="material.supply",
+            msg_type=INVENTORY_V1,
             payload={
                 "material": material,
-                "amount": supplied
+                "amount": real_amount
                 }
             )
         self.state_manager.transition(

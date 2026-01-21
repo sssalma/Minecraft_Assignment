@@ -1,24 +1,43 @@
 import time
+import mcpi.block as block
 from .mining_interface import MiningStrategy
 
+
 class VerticalMining(MiningStrategy):
-    """
-    Per simular l'excavació cap avall.
-    """
-    def mine(self, miner, material: str, amount: int) -> int:
 
-        #retorna el que s'extreu i el miner és el que modifica l'inventari. 
-        miner.mc.post_chat(
-            f"Miner: mineria vertical de {amount} {material}"
-        )
+    def block_to_material(self, block_id: int) -> str:
+        if block_id == 1:
+            return "stone"
+        if block_id == 17:
+            return "wood"
+        if block_id in (2, 3):
+            return "dirt"
+        return "other"
 
-        # Simulació de temps de mineria
-        time.sleep(1)
+    def mine(self, miner, amount):
+        mc = miner.mc.get_mc()
+        pos = mc.player.getTilePos()
 
-        # Quantitat disponible real
-        available = miner.inventory.available(material)
+        mined = {}
+        y = pos.y - 1
 
-        # Quantitat que realment es pot subministrar
-        extracted = min(available, amount)
+        miner.mc.post_chat("Miner: mineria vertical REAL")
 
-        return extracted
+        while y > 0 and sum(mined.values()) < amount:
+            current = mc.getBlock(pos.x, y, pos.z)
+            block_id = current.id if hasattr(current, "id") else current
+
+            # Ignorem aire, aigua, lava, bedrock
+            if block_id in (0, 7, 8, 9, 10, 11):
+                y -= 1
+                continue
+
+            mc.setBlock(pos.x, y, pos.z, block.AIR.id)
+
+            material = self.block_to_material(block_id)
+            mined[material] = mined.get(material, 0) + 1
+
+            time.sleep(0.15)
+            y -= 1
+
+        return mined

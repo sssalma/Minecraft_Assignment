@@ -7,30 +7,19 @@ import os
 import asyncio
 import logging
 
-from logging_decorator.LogDecorator import LogDecorator
-
-from src.infrastructure.minecraft.chat_listener import ChatListener
-from src.infrastructure.minecraft.mc_client import MinecraftClient
-from src.runtime.workflow_manager import WorkflowManager
-
-
-#preparo DECORATOR per afegir workflow id als logs
-_original_factory = logging.getLogRecordFactory() #el passaré pel const
-workflow_factory = LogDecorator(_original_factory)
-logging.setLogRecordFactory(workflow_factory)
-
 # Configurar sistema de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(message)s'
 )
 
-
-
 # Afegir directori src al path de Python
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, script_dir)
 
+from src.infrastructure.minecraft.chat_listener import ChatListener
+from src.infrastructure.minecraft.mc_client import MinecraftClient
+from src.runtime.workflow_manager import WorkflowManager
 
 async def async_main():
     """Funcio principal asincrona que gestiona el bus i el bucle de ticks."""

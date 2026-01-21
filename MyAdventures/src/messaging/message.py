@@ -7,13 +7,13 @@ class Message:
     Missatge estandarditzat segons l'esquema JSON del projecte.
     Patró: Data Transfer Object (DTO) + Validator.
     """
-    def __init__(self, source, target, msg_type, payload, context=None):
+    def __init__(self, source, target, msg_type, payload, status= "NEW", context=None):
         self.source = source
         self.target = target
         self.msg_type = msg_type  
         self.payload = payload    
         self.timestamp = datetime.now(timezone.utc).isoformat() # pel format ISO 8601 
-        self.status = "NEW"
+        self.status = status
         self.context = context or {}
         
         # quan creo el missatge, el valido

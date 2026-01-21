@@ -6,7 +6,7 @@ from src.domain.map_data import MapData
 from src.domain.bom import BOM, BOMPhase
 from src.construction.planners.build_planner import BuildPlanner
 from src.construction.executors.build_executor import BuildExecutor
-
+from src.messaging.message_types import *
 
 class BuilderBot(BaseAgent):  ###builder de en el mon real
     def __init__(self, mc,bus):
@@ -52,7 +52,7 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
 
         self.send_message(
                 target="MinerBot",
-                msg_type="materials.requirements.v1",
+                msg_type=MATERIAL_REQUIREMENTS_V1,
                 payload={
                     "material": action.material,
                     "amount": action.amount
@@ -84,7 +84,7 @@ class BuilderBot(BaseAgent):  ###builder de en el mon real
                 "generant BOM a partir del mapa"
             )
         #rebo material
-        elif msg.msg_type == "material.supply": #PER ACLARARRRRRR
+        elif msg.msg_type == INVENTORY_V1: 
             amount = msg.payload.get("amount", 0)
             material = msg.payload.get("material")
 
