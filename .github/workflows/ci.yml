@@ -23,6 +23,8 @@ jobs:
           pip install pytest pytest-cov
 
       - name: Run tests and generate coverage
+        env:
+          PYTHONPATH: ./MyAdventures
         run: |
           pytest MyAdventures/src/tests --cov=MyAdventures/src --cov-report=xml
 
