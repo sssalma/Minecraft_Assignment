@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/github/sssalma/Minecraft_Assignment/graph/badge.svg?token=DZH3OJFNUZ)](https://codecov.io/github/sssalma/Minecraft_Assignment)
+
+
 # Windows PC Starter Kit
 
 Martin O'Hanlon
