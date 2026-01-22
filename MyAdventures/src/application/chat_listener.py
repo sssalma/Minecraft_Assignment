@@ -30,32 +30,32 @@ class ChatListener:
             print(f"Workflow {wf_id} iniciat.")
 
         elif message == "agent help":
-            self.mc.postToChat("Decisió de disseny: Les comandes s'apliquen a l'ultim workflow creat.")
-            self.mc.postToChat("Comandes disponibles:")
-            self.mc.postToChat("agent help   - mostra aquesta ajuda")
-            self.mc.postToChat("agent status - estat dels agents")
-            self.mc.postToChat("agent pause  - pausa agents en execució")
-            self.mc.postToChat("agent resume - reprèn agents pausats")
-            self.mc.postToChat("agent stop   - atura el workflow")
+            self.mc.post_chat("Decisió de disseny: Les comandes s'apliquen a l'ultim workflow creat.")
+            self.mc.post_chat("Comandes disponibles:")
+            self.mc.post_chat("agent help   - mostra aquesta ajuda")
+            self.mc.post_chat("agent status - estat dels agents")
+            self.mc.post_chat("agent pause  - pausa agents en execució")
+            self.mc.post_chat("agent resume - reprèn agents pausats")
+            self.mc.post_chat("agent stop   - atura el workflow")
 
         elif message == "agent stop":
             wf = self.workflow_manager.get_workflow()
             if not wf:
-                self.mc.postToChat("No hi ha cap workflow actiu")
+                self.mc.post_chat("No hi ha cap workflow actiu")
                 return
             self.workflow_manager.stop_workflow()
-            self.mc.postToChat("Workflow aturat")
+            self.mc.post_chat("Workflow aturat")
 
         elif message == "agent status":
             wf = self.workflow_manager.get_workflow()
             if not wf:
-                self.mc.postToChat("No hi ha cap workflow actiu")
+                self.mc.post_chat("No hi ha cap workflow actiu")
                 return
 
             status = wf.observer.get_status()
 
             if not status:
-                self.mc.postToChat("Encara no hi ha informació d'estat")
+                self.mc.post_chat("Encara no hi ha informació d'estat")
                 return
 
             # MAP: dict -> llista de strings 
@@ -63,12 +63,12 @@ class ChatListener:
                     lambda item: f"{item[0]}: {item[1]}",
                     status.items() ) 
             for line in lines:
-                self.mc.postToChat(line)
+                self.mc.post_chat(line)
 
         elif message == "agent pause":
             wf = self.workflow_manager.get_workflow()
             if not wf:
-                self.mc.postToChat("No hi ha cap workflow actiu")
+                self.mc.post_chat("No hi ha cap workflow actiu")
                 return
             
             #uso l'observer per saber l'estat
@@ -80,12 +80,12 @@ class ChatListener:
             )
             for agent_name, _ in running_agents:
                 wf.coordinator.send_control(agent_name, "pause")
-            self.mc.postToChat("Agents en execució pausats")
+            self.mc.post_chat("Agents en execució pausats")
 
         elif message == "agent resume":
             wf = self.workflow_manager.get_workflow()
             if not wf:
-                self.mc.postToChat("No hi ha cap workflow actiu")
+                self.mc.post_chat("No hi ha cap workflow actiu")
                 return
             #uso l'observer per saber l'estat i FILTRO els que estàn PAUSED
             status = wf.observer.get_status()
@@ -95,43 +95,20 @@ class ChatListener:
             )
             for agent_name, _ in paused_agents:
                 wf.coordinator.send_control(agent_name, "resume")
-            self.mc.postToChat("Agents pausats reactivats")
+            self.mc.post_chat("Agents pausats reactivats")
         elif message == "stop":
             self.workflow_manager.stop_workflow()
-            self.mc.postToChat("Workflow aturat")
-
-        elif message.startswith("explorer start"): #explorer start + específic
-            wf = self.workflow_manager.get_workflow()
-            if not wf:
-                self.mc.postToChat("No hi ha cap workflow actiu")
-                return
-
-            parts = message.split()
-            args = dict(
-                map(
-                    lambda kv: kv.split("="),
-                    filter(lambda p: "=" in p, parts)
-                )
-            )
-            wf.coordinator.send_control(
-                target="ExplorerBot",
-                command="start",
-                payload=args
-            )
-            self.mc.postToChat(f"Explorer iniciat amb params {args}")
-        elif message == "workflow list":
-            ids = self.workflow_manager.list_workflows()
-            self.mc.postToChat(f"Workflows actius: {ids}")
+            self.mc.post_chat("Workflow aturat")
 
         elif message.startswith("miner set strategy"):
             wf = self.workflow_manager.get_workflow()
             if not wf:
-                self.mc.postToChat("No hi ha cap workflow actiu")
+                self.mc.post_chat("No hi ha cap workflow actiu")
                 return
             parts = message.split()
 
             if len(parts) < 4:
-                self.mc.postToChat("Canviant estratègia.")
+                self.mc.post_chat("Canviant estratègia.")
                 return
 
             strategy = parts[-1]
@@ -139,4 +116,4 @@ class ChatListener:
                 target="MinerBot",
                 strategy_name=strategy
             )
-            self.mc.postToChat(f"Estratègia del Miner canviada a {strategy}")
+            self.mc.post_chat(f"Estratègia del Miner canviada a {strategy}")

@@ -16,3 +16,60 @@
 [2026-01-22 02:53:13] MinerBot → WAITING | materials enviats
 [2026-01-22 02:53:13] BuilderBot → RUNNING | construint
 [2026-01-22 02:53:15] BuilderBot → WAITING | Fi construccio
+
+=== Workflow 1 iniciat ===
+[2026-01-22 22:07:14] ExplorerBot → RUNNING | start command
+
+=== Workflow 1 iniciat ===
+[2026-01-22 22:09:26] ExplorerBot → RUNNING | start command
+[2026-01-22 22:09:28] ExplorerBot → WAITING | esperant nova ordre
+[2026-01-22 22:09:28] BuilderBot → RUNNING | generant BOM a partir del mapa
+[2026-01-22 22:09:28] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:09:28] MinerBot → RUNNING | minant 4 stone
+[2026-01-22 22:09:29] MinerBot → WAITING | materials enviats
+[2026-01-22 22:09:29] BuilderBot → RUNNING | fase completada, avansant
+[2026-01-22 22:09:30] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:09:30] MinerBot → RUNNING | minant 4 wood
+[2026-01-22 22:09:30] MinerBot → WAITING | materials enviats
+[2026-01-22 22:09:30] BuilderBot → RUNNING | fase completada, avansant
+[2026-01-22 22:09:31] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:09:31] MinerBot → RUNNING | minant 2 wood
+[2026-01-22 22:09:31] MinerBot → WAITING | materials enviats
+[2026-01-22 22:09:31] BuilderBot → RUNNING | construint
+[2026-01-22 22:09:32] BuilderBot → WAITING | Fi construccio
+
+=== Workflow 1 iniciat ===
+[2026-01-22 22:22:18] ExplorerBot → RUNNING | start command
+[2026-01-22 22:22:20] ExplorerBot → WAITING | esperant nova ordre
+[2026-01-22 22:22:20] BuilderBot → RUNNING | generant BOM a partir del mapa
+[2026-01-22 22:22:20] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:22:20] MinerBot → RUNNING | minant 4 stone
+[2026-01-22 22:22:21] MinerBot → WAITING | materials enviats
+[2026-01-22 22:22:21] BuilderBot → RUNNING | fase completada, avansant
+[2026-01-22 22:22:22] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:22:22] MinerBot → RUNNING | minant 4 wood
+[2026-01-22 22:22:22] MinerBot → WAITING | materials enviats
+[2026-01-22 22:22:22] BuilderBot → RUNNING | fase completada, avansant
+[2026-01-22 22:22:23] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:22:23] MinerBot → RUNNING | minant 2 wood
+[2026-01-22 22:22:24] MinerBot → WAITING | materials enviats
+[2026-01-22 22:22:24] BuilderBot → RUNNING | construint
+[2026-01-22 22:22:25] BuilderBot → WAITING | Fi construccio
+
+=== Workflow 1 iniciat ===
+[2026-01-22 22:24:04] ExplorerBot → RUNNING | start command
+[2026-01-22 22:24:05] ExplorerBot → WAITING | esperant nova ordre
+[2026-01-22 22:24:05] BuilderBot → RUNNING | generant BOM a partir del mapa
+[2026-01-22 22:24:06] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:24:06] MinerBot → RUNNING | minant 4 stone
+[2026-01-22 22:24:07] MinerBot → WAITING | materials enviats
+[2026-01-22 22:24:07] BuilderBot → RUNNING | fase completada, avansant
+[2026-01-22 22:24:07] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:24:07] MinerBot → RUNNING | minant 4 wood
+[2026-01-22 22:24:08] MinerBot → WAITING | materials enviats
+[2026-01-22 22:24:08] BuilderBot → RUNNING | fase completada, avansant
+[2026-01-22 22:24:09] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 22:24:09] MinerBot → RUNNING | minant 2 wood
+[2026-01-22 22:24:09] MinerBot → WAITING | materials enviats
+[2026-01-22 22:24:09] BuilderBot → RUNNING | construint
+[2026-01-22 22:24:10] BuilderBot → WAITING | Fi construccio
