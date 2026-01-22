@@ -1,0 +1,18 @@
+
+=== Workflow 1 iniciat ===
+[2026-01-22 02:53:08] ExplorerBot → RUNNING | start command
+[2026-01-22 02:53:10] ExplorerBot → WAITING | esperant nova ordre
+[2026-01-22 02:53:10] BuilderBot → RUNNING | generant BOM a partir del mapa
+[2026-01-22 02:53:10] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 02:53:10] MinerBot → RUNNING | minant 4 stone
+[2026-01-22 02:53:11] MinerBot → WAITING | materials enviats
+[2026-01-22 02:53:11] BuilderBot → RUNNING | fase completada, avansant
+[2026-01-22 02:53:12] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 02:53:12] MinerBot → RUNNING | minant 4 wood
+[2026-01-22 02:53:13] MinerBot → WAITING | materials enviats
+[2026-01-22 02:53:13] BuilderBot → RUNNING | fase completada, avansant
+[2026-01-22 02:53:13] BuilderBot → WAITING | materials demanats al miner
+[2026-01-22 02:53:13] MinerBot → RUNNING | minant 2 wood
+[2026-01-22 02:53:13] MinerBot → WAITING | materials enviats
+[2026-01-22 02:53:13] BuilderBot → RUNNING | construint
+[2026-01-22 02:53:15] BuilderBot → WAITING | Fi construccio
