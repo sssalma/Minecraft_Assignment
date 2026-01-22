@@ -17,8 +17,8 @@ logging.basicConfig(
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, script_dir)
 
-from src.infrastructure.minecraft.chat_listener import ChatListener
-from src.infrastructure.minecraft.mc_client import MinecraftClient
+from src.application.chat_listener import ChatListener
+from src.minecraft.mc_client import MinecraftClient
 from src.runtime.workflow_manager import WorkflowManager
 
 async def async_main():

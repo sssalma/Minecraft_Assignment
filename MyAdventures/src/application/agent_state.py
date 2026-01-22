@@ -2,7 +2,6 @@ from enum import Enum
 
 class AgentState(Enum):
     
-    
     #FSM millorada
     IDLE = "IDLE"
     RUNNING = "RUNNING"

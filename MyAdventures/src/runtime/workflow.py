@@ -3,7 +3,7 @@ import threading
 import asyncio
 import logging
 
-from src.infrastructure.minecraft.mc_client import MinecraftClient
+from src.minecraft.mc_client import MinecraftClient
 from src.messaging.message_bus import MessageBus
 from src.application.coordinator import Coordinator
 from src.reflection.agent_loader import AgentLoader
