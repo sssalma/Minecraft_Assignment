@@ -57,13 +57,6 @@ class MessageBus:
         Enruta el missatge al destinatari.
         """
         target = message.target
-
-        if target == "ALL":
-            for name, handler in self.subscribers.items():
-                if name != message.source:
-                    asyncio.create_task(handler(message))
-            return
-
         handler = self.subscribers.get(target)
         if handler:
             asyncio.create_task(handler(message))
@@ -71,7 +64,6 @@ class MessageBus:
             print(f"[MessageBus] Destinatari desconegut: {target}")
 
     # ========= ATURADA =========
-
     async def stop(self):
         """
         Atura el loop del bus.

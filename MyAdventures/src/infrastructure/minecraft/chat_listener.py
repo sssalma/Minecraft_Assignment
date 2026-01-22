@@ -76,7 +76,7 @@ class ChatListener:
             # i FILTRO els que estàn actius : NO idle i no stopped
             status = wf.observer.get_status()
             running_agents = filter(
-                lambda item: item[1] not in ("IDLE", "STOPPED", "ERROR"),
+                lambda item: item[1] not in ("IDLE", "STOPPED","ERROR"),
                 status.items()
             )
             for agent_name, _ in running_agents:
@@ -101,6 +101,46 @@ class ChatListener:
             self.workflow_manager.stop_workflow()
             self.mc.post_chat("Workflow aturat")
 
+        elif message.startswith("explorer start"): #explorer start + específic
+            wf = self.workflow_manager.get_workflow()
+            if not wf:
+                self.mc.post_chat("No hi ha cap workflow actiu")
+                return
+
+            parts = message.split()
+            args = dict(
+                map(
+                    lambda kv: kv.split("="),
+                    filter(lambda p: "=" in p, parts)
+                )
+            )
+
+            wf.coordinator.send_control(
+                target="ExplorerBot",
+                command="start",
+                payload=args
+            )
+
+            self.mc.post_chat(f"Explorer iniciat amb params {args}")
+
         elif message == "workflow list":
             ids = self.workflow_manager.list_workflows()
             self.mc.post_chat(f"Workflows actius: {ids}")
+
+        elif message.startswith("miner set strategy"):
+            wf = self.workflow_manager.get_workflow()
+            if not wf:
+                self.mc.post_chat("No hi ha cap workflow actiu")
+                return
+            parts = message.split()
+
+            if len(parts) < 4:
+                self.mc.post_chat("Canviant estratègia.")
+                return
+
+            strategy = parts[-1]
+            wf.coordinator.send_strategy(
+                target="MinerBot",
+                strategy_name=strategy
+            )
+            self.mc.post_chat(f"Estratègia del Miner canviada a {strategy}")

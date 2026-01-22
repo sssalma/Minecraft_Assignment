@@ -81,33 +81,22 @@ class Coordinator:
     
     # ========= COMANDES DE CONTROL =========
 
-    def send_control(self, target: str, command: str):
+    def send_control(self, target: str, command: str, payload= None):
         """
-        Envia una comanda de control a un agent o a tots.
+        Envia una comanda de control a un agent.
         Exemples: start, pause, resume, stop
         """
         print("[Coordinator] Enviant control:", target, command)
-
-        payload = {"command": command}
-
-        if target == "ALL":
-            for name in self.agents:
-                message = Message(
-                    source="Coordinator",
-                    target=name,
-                    msg_type="command.control",
-                    payload=payload
-                )
-                # Enviament síncron segur al bus asíncron
-                self.bus.message_queue.put_nowait(message)
-        else:
-            message = Message(
+        message = Message(
                 source="Coordinator",
                 target=target,
                 msg_type="command.control",
-                payload=payload
+                payload={
+                    "command": command,
+                    "params": payload or {}
+        }
             )
-            self.bus.message_queue.put_nowait(message)
+        self.bus.message_queue.put_nowait(message)
 
     # ========= CANVI D'ESTRATÈGIA =========
 

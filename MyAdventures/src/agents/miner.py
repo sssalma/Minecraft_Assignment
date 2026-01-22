@@ -53,7 +53,6 @@ class MinerBot(BaseAgent):
                 self.mc.post_chat(f"Miner: estratègia desconeguda {strategy_name}, mantening l'actual")
             return                
         # PETICIÓ DE MATERIALS
-
         if msg.msg_type != "materials.requirements.v1":
             return
 
@@ -72,7 +71,7 @@ class MinerBot(BaseAgent):
             AgentState.RUNNING,
             f"minant {amount} {material}"
         )
-        # EXECUCIÓ DE LA MINERIA VIA STRATEGY
+        # EXECUCIÓ DE LA MINERIA (estratègia ja canviada prèviament o default)
         extracted = self.strategy.mine(self, amount)
         total_amount = sum(extracted.values()) #decisió de disseny:per simplicitat, només tinc en compte la quantitat.
         if total_amount <=0 :

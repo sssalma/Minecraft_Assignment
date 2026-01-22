@@ -30,7 +30,7 @@ class GridMining(MiningStrategy):
                     return mined
 
                 x = pos.x + dx
-                y = pos.y
+                y = pos.y -1
                 z = pos.z + dz
 
                 block_id = mc.getBlock(x, y, z)
