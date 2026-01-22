@@ -4,8 +4,8 @@ import time
 from src.domain.inventory import Inventory
 from src.domain.map_data import MapData
 from src.domain.bom import BOM, BOMPhase
-from src.construction.planners.build_planner import BuildPlanner
-from src.construction.executors.build_executor import BuildExecutor
+from src.construction.build_planner import BuildPlanner
+from src.construction.build_executor import BuildExecutor
 from src.messaging.message_types import *
 
 class BuilderBot(BaseAgent):  ###builder de en el mon real
