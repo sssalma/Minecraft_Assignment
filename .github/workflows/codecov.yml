@@ -1,11 +1,13 @@
-name: CI - Tests and Coverage
+name: Coverage
 
 on:
   push:
+    branches: [ branchSelma ]
   pull_request:
+    branches: [ branchSelma ]
 
 jobs:
-  test:
+  coverage::
     runs-on: ubuntu-latest
 
     steps:
@@ -20,17 +22,42 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-cov
+          python -m pip install pytest pytest-cov pytest-asyncio
 
-      - name: Run tests and generate coverage
+      - name: Run tests and generate coverage.xml
         env:
-          PYTHONPATH: ./MyAdventures
+          COVERAGE_RCFILE: MyAdventures/coverage/.coveragerc
+          COVERAGE_FILE: MyAdventures/coverage/.coverage
         run: |
-          pytest MyAdventures/src/tests --cov=MyAdventures/src --cov-report=xml
+        # Ensure coverage output directory exists
+          mkdir -p MyAdventures/coverage
+          pytest --maxfail=1 --disable-warnings -q --cov=src --cov-config=MyAdventures/coverage/.coveragerc --cov-report=xml:MyAdventures/coverage/coverage.xml --cov-report=term-missing MyAdventures/src/tests
 
+      - name: Upload coverage.xml to artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: MyAdventures/coverage/coverage.xml
+      - name: Verify coverage.xml exists
+        run: |
+          ls -lah MyAdventures/coverage/coverage.xml
+          echo "File size:"
+          wc -c < MyAdventures/coverage/coverage.xml
+      - name: Remove .coverage to prevent pycoverage plugin interference
+        run: rm -f MyAdventures/coverage/.coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          token: 825ae04b-106f-4ccf-aee2-b5e4db3e9635
-          files: coverage.xml
+          files: ${{ github.workspace }}/MyAdventures/coverage/coverage.xml
+          disable_search: true
           fail_ci_if_error: false
+          verbose: true
+          token: ${{ 825ae04b-106f-4ccf-aee2-b5e4db3e9635 }}
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+      
+
+          
