@@ -26,12 +26,13 @@ jobs:
 
       - name: Run tests and generate coverage.xml
         env:
+          PYTHONPATH: MyAdventures
           COVERAGE_RCFILE: MyAdventures/coverage/.coveragerc
           COVERAGE_FILE: MyAdventures/coverage/.coverage
         run: |
           # Ensure coverage output directory exists
           mkdir -p MyAdventures/coverage
-          pytest --maxfail=1 --disable-warnings -q --cov=src --cov-config=MyAdventures/coverage/.coveragerc --cov-report=xml:MyAdventures/coverage/coverage.xml --cov-report=term-missing MyAdventures/src/tests
+          pytest --maxfail=1 --disable-warnings -q --cov=MyAdventures/src --cov-config=MyAdventures/coverage/.coveragerc --cov-report=xml:MyAdventures/coverage/coverage.xml --cov-report=term-missing MyAdventures/src/tests
 
       - name: Upload coverage.xml to artifact
         uses: actions/upload-artifact@v4
