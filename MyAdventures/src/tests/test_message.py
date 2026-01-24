@@ -67,3 +67,16 @@ def test_message_to_json():
     assert data["target"] == "B"
     assert data["type"] == "test.type"
     assert data["payload"] == {"x": 1}
+    
+def test_validator_rejects_non_dict_payload():
+    msg = Message(
+        source="AgentA",
+        target="AgentB",
+        msg_type=COMMAND_CONTROL_V1,
+        payload={"ok": True}
+    )
+
+    msg.payload = "INVALID"
+
+    with pytest.raises(ValueError):
+        MessageValidator.validate(msg)

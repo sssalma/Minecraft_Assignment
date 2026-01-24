@@ -26,8 +26,27 @@ def test_invalid_state_transition_does_not_change_state_nor_notify():
     with pytest.raises(ValueError):
         sm.transition(AgentState.ERROR, "invalid transition")
 
-    # 1️⃣ l’estat NO ha canviat
+    # l’estat NO ha canviat
     assert sm.state == initial_state
 
-    # 2️⃣ cap observer ha estat notificat
+    # 2cap observer ha estat notificat
     assert observer.notifications == []
+
+def test_restore_previous_state_notifies_observer():
+    sm = StateManager("AgentX")
+    observer = DummyObserver()
+    sm.add_observer(observer)
+
+    sm.transition(AgentState.RUNNING, "start")
+    sm.restore_previous_state("resume")
+
+    assert sm.state == AgentState.IDLE
+    assert observer.notifications[-1] == ("AgentX", AgentState.IDLE, "resume")
+
+def test_state_helpers():
+    sm = StateManager("AgentY")
+
+    assert sm.is_running() is False
+    sm.transition(AgentState.RUNNING)
+    assert sm.is_running() is True
+    assert sm.is_state(AgentState.RUNNING)
