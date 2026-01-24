@@ -65,20 +65,10 @@ class Workflow(threading.Thread):
             while self._running:
                 await asyncio.sleep(0.5)
         finally:
-            await self.shutdown()
-
-    async def shutdown(self):
-        log.info(f"[Workflow {self.id}] Aturant workflow")
-        await self.coordinator.stop_agents()
-        await self.coordinator.stop()
+            self.stop()
 
     def stop(self):
         """Demana l'aturada del workflow."""
         self._running = False
 
-    def is_idle(self):
-        """Retorna True si el Builder està IDLE."""
-        for agent in self.agents:
-            if agent.name == "BuilderBot":
-                return agent.state_manager.is_state(AgentState.IDLE)
-        return False
+ 

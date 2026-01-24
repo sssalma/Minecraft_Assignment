@@ -7,6 +7,7 @@ class StateManager:
     def __init__(self, agent_name: str):
         self.agent_name = agent_name
         self.state = AgentState.IDLE
+        self.previous_state= None #per poder tornar a l'estat anterior amb 'agent resume'
         self.observers = []
 
     def transition(self, new_state: AgentState, reason: str = ""):
@@ -16,13 +17,13 @@ class StateManager:
                 f"[{self.agent_name}] Invalid transition:  {self.state.value} -> {new_state.value}")
             raise ValueError("Invalid state transition")
 
-        prev = self.state
-        self.state = new_state
+        self.previous_state = self.state #ús:resume, logs, observers
+        self.state = new_state 
         #Quan hi hagi un canvi d'estat, notifico als observers:
         self._notify(new_state,reason)
 
         log.info(
-            f"[{self.agent_name}] STATE {prev.value} -> {new_state.value} | reason={reason}"
+            f"[{self.agent_name}] STATE {self.previous_state.value} -> {new_state.value} | reason={reason}"
         )
 
     def is_running(self)-> bool:
@@ -42,4 +43,15 @@ class StateManager:
       for obs in self.observers:
         obs.on_state_change(self.agent_name, new_state, reason)
 
+    def restore_previous_state(self, reason: str = "resume"):
+
+        prev = self.state
+        self.state = self.previous_state
+        self.previous_state = None
+
+        self._notify(self.state, reason)
+
+        log.info(
+            f"[{self.agent_name}] STATE {prev.value} -> {self.state.value} | reason={reason}"
+        )
 

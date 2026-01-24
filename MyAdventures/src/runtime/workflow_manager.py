@@ -39,7 +39,6 @@ class WorkflowManager:
         wf = self.get_workflow(workflow_id)
         if wf:
             wf.stop()
-            log.info(f"[WorkflowManager] Workflow {wf.id} aturat")
-
+            
     def list_workflows(self):
         return list(self.workflows.keys())

@@ -24,7 +24,7 @@ class BaseAgent(ABC):
     
 
 
-    def run_step(self):
+    async def run_step(self):
         """
         Quan l'estat és RUNNING, s'executa a cada cicle del joc.
         """
@@ -53,6 +53,15 @@ class BaseAgent(ABC):
         if self.state_manager.is_state(AgentState.STOPPED) or \
             self.state_manager.is_state(AgentState.ERROR):
             return
+        
+        # PAUSED: només accepto resume
+        if self.state_manager.is_state(AgentState.PAUSED):
+            if not (
+                msg.msg_type == "command.control" and
+                msg.payload.get("command") == "resume"
+            ):
+                return
+
         # Canvia l'estat si son comandes de control comunes!!!
         if msg.msg_type == "command.control":
             cmd = msg.payload.get("command")
@@ -75,15 +84,13 @@ class BaseAgent(ABC):
                     )
 
             elif cmd == "resume":
-            # Solo se puede reanudar desde PAUSED
+            # criteri: tornarà a l'estat en que estava
                 if self.state_manager.is_state(AgentState.PAUSED):
-                    self.state_manager.transition(
-                        AgentState.RUNNING,
-                        "resume command"
-                    )
+                    self.state_manager.restore_previous_state("resume command");
+        
 
             elif cmd == "stop":
-                # Stop siempre es seguro
+                # Stop sempre es segur
                 self.reset() #faig resett
                 if not self.state_manager.is_state(AgentState.STOPPED):
                     self.state_manager.transition(

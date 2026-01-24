@@ -39,7 +39,8 @@ class AgentRunner:
                 # Faré el run_step només quan l'estat sigui RUNNING o WAITING
                 if state in (AgentState.RUNNING, AgentState.WAITING):
                     try:
-                        self.agent.run_step()
+                        if asyncio.iscoroutinefunction(self.agent.run_step):
+                            await self.agent.run_step()
                     except Exception as e:
                         print(f"[Runner] Error en {self.agent.name}: {e}")
                         self.agent.reset()

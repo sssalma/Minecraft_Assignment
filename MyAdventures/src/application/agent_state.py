@@ -25,13 +25,16 @@ ALLOWED_TRANSITIONS = {
         },
         AgentState.PAUSED: {
             AgentState.RUNNING,
-            AgentState.STOPPED
+            AgentState.STOPPED,
+            AgentState.WAITING,
+            AgentState.ERROR
         },
         AgentState.WAITING: {
             AgentState.RUNNING,
             AgentState.ERROR,
             AgentState.STOPPED,
-            AgentState.WAITING
+            AgentState.WAITING,
+            AgentState.PAUSED
         },
         AgentState.ERROR: {
             AgentState.STOPPED
@@ -39,6 +42,5 @@ ALLOWED_TRANSITIONS = {
         AgentState.STOPPED: {
         AgentState.IDLE,
         AgentState.RUNNING,
-        AgentState.PAUSED,  
     }
 }
