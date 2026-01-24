@@ -26,11 +26,6 @@ class WorkflowObserver(StateObserver):
         }
         self.events.append(event)
 
-        print(
-            f"[Workflow {self.workflow_id}] "
-            f"{agent_name} → {new_state.name} | {reason}"
-        )
-
         #pels logs:
         timestamp = datetime.fromtimestamp(event["time"]).strftime(
             "%Y-%m-%d %H:%M:%S"
